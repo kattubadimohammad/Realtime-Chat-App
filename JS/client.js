@@ -2,43 +2,62 @@ const socket = io('https://realtime-chat-app-dkxc.onrender.com');
 
 const form = document.getElementById('send-container');
 const messageInput = document.getElementById('messageInp');
-const messageContainer = document.querySelector('.container')
+const messageContainer = document.querySelector('.container');
 
-var audio = new Audio('ting.mp3');
+const audio = new Audio('ting.mp3');
 
-const append = (message, position)=>{
+// Function to append messages
+const append = (message, position) => {
     const messageElement = document.createElement('div');
     messageElement.innerText = message;
-    messageElement.classList.add('message');
-    messageElement.classList.add(position)
-    messageContainer.append(messageElement);
+    messageElement.classList.add('message', position);
+    messageContainer.appendChild(messageElement);
     messageContainer.scrollTop = messageContainer.scrollHeight;
-    if(position == 'left'){
-        console.log('sound is playing');
-        audio.play();
+
+    if (position === 'left') {
+        console.log('Sound is playing');
+        audio.play().catch(error => console.error('Audio play failed:', error));
     }
-}
+};
 
-
-form.addEventListener('submit', (e)=>{
+// Event listener for message submission
+form.addEventListener('submit', (e) => {
     e.preventDefault();
-    const message = messageInput.value;
-    append(`You: ${message}`, 'right');
-    socket.emit('send', message);
-    messageInput.value = '';
-})
+    const message = messageInput.value.trim();
+    if (message) {
+        append(`You: ${message}`, 'right');
+        socket.emit('send', message);
+        messageInput.value = '';
+    }
+});
 
-const name = prompt("Enter your name to join LetsChat")
-socket.emit('new-user-joined', name)
+// Get username with validation
+let name;
+while (!name) {
+    name = prompt("Enter your name to join LetsChat").trim();
+    if (!name) alert("Name cannot be empty. Please enter a valid name.");
+}
+socket.emit('new-user-joined', name);
 
-socket.on('user-joined', name=>{
+// Event listeners for socket events
+socket.on('user-joined', (name) => {
     append(`${name} joined the chat`, 'right');
-})
+});
 
-socket.on('receive', data=>{
-    append(`${data.name }: ${data.message}`, 'left')
-})
+socket.on('receive', (data) => {
+    append(`${data.name}: ${data.message}`, 'left');
+});
 
-socket.on('left', name=>{
-    append(`${name } left the chat`, 'left');
-})
+socket.on('left', (name) => {
+    append(`${name} left the chat`, 'left');
+});
+
+// Confirm connection
+socket.on('connect', () => {
+    console.log('Connected to the server');
+});
+
+// Handle disconnection
+socket.on('disconnect', () => {
+    append("You have been disconnected from the server.", 'left');
+});
