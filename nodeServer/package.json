@@ -8,7 +8,7 @@
     "dev": "nodemon nodeServer/index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "Mayank Chaudhary",
+  "author": "K Mohammad",
   "license": "ISC",
   "dependencies": {
     "express": "^4.18.2",
