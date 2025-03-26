@@ -8,8 +8,16 @@ const io = socketIo(server);
 
 const users = {};
 
+// Serve static files
+const path = require('path');
+app.use(express.static(path.join(__dirname, '../')));
+
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, '../index.html'));
+});
+
 io.on('connection', (socket) => {
-  console.log("New connection established", socket.id);
+  console.log(`New connection established, Socket ID: ${socket.id}`);
   
   socket.on('new-user-joined', (name) => {
     if (name) {
@@ -20,8 +28,8 @@ io.on('connection', (socket) => {
   });
 
   socket.on('send', (message) => {
-    console.log(`Message from ${users[socket.id]}: ${message}`);
     if (message && users[socket.id]) {
+      console.log(`Message from ${users[socket.id]}: ${message}`);
       socket.broadcast.emit('receive', { message, name: users[socket.id] });
     }
   });
