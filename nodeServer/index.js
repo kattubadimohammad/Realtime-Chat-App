@@ -1,35 +1,29 @@
 const express = require('express');
+const path = require('path');
 const http = require('http');
 const socketIo = require('socket.io');
+
 const app = express();
 const server = http.createServer(app);
 const io = socketIo(server);
 
-app.use(express.static(__dirname + '/../public'));
+app.use(express.static(path.join(__dirname, '../public')));
 
-// Serve index.html on root
 app.get('/', (req, res) => {
-  res.sendFile(__dirname + '/../public/index.html');
+  res.sendFile(path.join(__dirname, '../index.html'));
 });
 
-const users = {};
-
 io.on('connection', (socket) => {
-  socket.on('new-user', (name) => {
-    users[socket.id] = name;
-    socket.broadcast.emit('user-joined', name);
-  });
+  console.log('New user connected');
 
   socket.on('send', (message) => {
-    socket.broadcast.emit('receive', { message, user: users[socket.id] });
+    socket.broadcast.emit('receive', { user: "Anonymous", message });
   });
 
   socket.on('disconnect', () => {
-    socket.broadcast.emit('user-left', users[socket.id]);
-    delete users[socket.id];
+    console.log('User disconnected');
   });
 });
 
-server.listen(8000, () => {
-  console.log('Server running on http://localhost:8000');
-});
+const PORT = process.env.PORT || 8000;
+server.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}`));
