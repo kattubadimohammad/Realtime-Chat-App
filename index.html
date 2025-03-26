@@ -2,8 +2,8 @@
 <html lang="en">
 
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>LetsChat - Realtime Node Socket.io Chat App</title>
 
   <!-- Socket.io and Client JS -->
@@ -11,9 +11,9 @@
   <script defer src="JS/client.js"></script>
 
   <!-- FontAwesome and Styles -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-  <link rel="stylesheet" href="CSS/style.css">
-  <link rel="stylesheet" href="CSS/emojionearea.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
+  <link rel="stylesheet" href="CSS/style.css" />
+  <link rel="stylesheet" href="CSS/emojionearea.min.css" />
 
   <!-- jQuery and Emoji Support -->
   <script src="https://code.jquery.com/jquery-3.5.1.min.js"
@@ -22,72 +22,29 @@
 </head>
 
 <body>
+  <!-- Background and Header -->
   <div class="bg"></div>
   <nav>
-    <img class="logo" src="icon.png" alt="LetsChat">
+    <img class="logo" src="icon.png" alt="LetsChat" />
     <h1>Welcome to LetsChat App</h1>
   </nav>
 
+  <!-- Chat Container -->
   <div class="container" id="chat-container">
     <p class="system-message">Welcome! Please enter your name to join the chat.</p>
+    <div id="messages" style="height: 300px; overflow-y: auto; border: 1px solid #ccc; padding: 10px;"></div>
   </div>
 
   <!-- Send Message Section -->
   <div class="send">
-    <form action="#" id="send-container">
-      <input type="text" name="messageInp" id="messageInp" placeholder="Type a message...">
-      <button class="btn" type="submit">
-        <i class="fa fa-paper-plane-o" aria-hidden="true"></i> Send
-      </button>
+    <form id="message-form">
+      <input id="message-input" type="text" placeholder="Type your message..." />
+      <button type="submit"><i class="fa fa-paper-plane"></i> Send</button>
     </form>
   </div>
 
-  <!-- JavaScript Section -->
-  <script>
-    let username = '';
-
-    // Capture username using prompt
-    function getUserName() {
-      username = prompt('Enter your name to join the chat:');
-      if (!username || username.trim() === '') {
-        alert('Name is required to join the chat!');
-        getUserName();
-      } else {
-        document.getElementById('chat-container').innerHTML += `<p class="system-message">You are now connected as <b>${username}</b>.</p>`;
-      }
-    }
-    getUserName();
-
-    // Emoji Initialization
-    $(document).ready(function () {
-      $("#messageInp").emojioneArea({
-        pickerPosition: "top"
-      });
-    });
-
-    // Prevent empty messages
-    document.getElementById('send-container').addEventListener('submit', function (e) {
-      e.preventDefault();
-      const message = $('#messageInp').data("emojioneArea").getText().trim();
-
-      if (!message) {
-        alert('Please enter a message before sending!');
-        return;
-      }
-
-      // Emit message using socket
-      socket.emit('send', { user: username, text: message });
-      $('#messageInp').data("emojioneArea").setText('');
-    });
-  </script>
-
-  <style>
-    .system-message {
-      color: #777;
-      font-style: italic;
-      margin-bottom: 10px;
-    }
-  </style>
+  <!-- Notification Sound -->
+  <audio id="ting" src="ting.mp3"></audio>
 </body>
 
 </html>
