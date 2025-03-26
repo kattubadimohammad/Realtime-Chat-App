@@ -1,23 +1,13 @@
+// package.json
 {
-  "name": "nodeserver",
+  "name": "chat-app",
   "version": "1.0.0",
-  "description": "This is a node Server for LetsChat Application",
-  "main": "index.js",
+  "main": "server.js",
   "scripts": {
-    "start": "node index.js",
-    "dev": "nodemon index.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node server.js"
   },
-  "author": "K Mohammad",
-  "license": "ISC",
   "dependencies": {
     "express": "^4.18.2",
     "socket.io": "^4.7.2"
-  },
-  "devDependencies": {
-    "nodemon": "^3.0.1"
-  },
-  "engines": {
-    "node": "22.12.0"
   }
 }
