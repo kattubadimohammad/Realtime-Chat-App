@@ -4,7 +4,12 @@ const socketIo = require("socket.io");
 
 const app = express();
 const server = http.createServer(app);
-const io = socketIo(server);
+const io = socketIo(server, {
+  cors: {
+    origin: '*', // Allow all origins
+    methods: ['GET', 'POST']
+  }
+});
 
 const users = {};
 
@@ -17,18 +22,24 @@ app.get('/', (req, res) => {
 
 io.on('connection', (socket) => {
   socket.on('new-user-joined', (name) => {
-    console.log("New user:", name);
-    users[socket.id] = name;
-    socket.broadcast.emit('user-joined', name);
+    if (name) {
+      console.log("New user joined:", name);
+      users[socket.id] = name;
+      socket.broadcast.emit('user-joined', name);
+    }
   });
 
   socket.on('send', (message) => {
-    socket.broadcast.emit('receive', { message, name: users[socket.id] });
+    if (message && users[socket.id]) {
+      socket.broadcast.emit('receive', { message, name: users[socket.id] });
+    }
   });
 
   socket.on('disconnect', () => {
-    socket.broadcast.emit('left', users[socket.id]);
-    delete users[socket.id];
+    if (users[socket.id]) {
+      socket.broadcast.emit('left', users[socket.id]);
+      delete users[socket.id];
+    }
   });
 });
 
