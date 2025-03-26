@@ -1,3 +1,13 @@
+const http = require('http');
+const express = require('express');
+const socketIo = require('socket.io');
+
+const app = express();
+const server = http.createServer(app);
+const io = socketIo(server);
+
+const users = {};
+
 io.on('connection', (socket) => {
   console.log("New connection established", socket.id);
   
@@ -23,4 +33,10 @@ io.on('connection', (socket) => {
       delete users[socket.id];
     }
   });
+});
+
+// Set the port to listen on
+const PORT = process.env.PORT || 10000;
+server.listen(PORT, () => {
+  console.log(`Server started on http://localhost:${PORT}`);
 });
